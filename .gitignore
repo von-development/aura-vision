@@ -1,0 +1,16 @@
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# runs / models
+runs/
+weights/
+*.onnx
+*.pt
+*.npz
+
+# datasets
+data/images/*
+data/labels/*
+!data/.gitkeep
