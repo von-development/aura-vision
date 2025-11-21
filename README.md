@@ -10,3 +10,5 @@ The goal is a real-time interface returning bounding boxes, class labels, distan
 The final outcome is to have a working demo working in a laptop webcam. 
 
 Addiotnaly, try to integrate it with the rasberry pi for the Aura Project being develop in the adcanced topics of robotic class.
+
+
