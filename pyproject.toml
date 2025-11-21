@@ -1,0 +1,11 @@
+[project]
+name = "aura-vision"
+version = "0.1.0"
+description = "AI and CV project"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.2.6",
+    "opencv-python>=4.12.0.88",
+    "ultralytics>=8.3.223",
+]
