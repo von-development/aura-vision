@@ -1,0 +1,75 @@
+# Aura-Vision Runtime Profiles
+# =============================
+# Each profile defines detector, camera, and runtime settings.
+# Use: aura --profile laptop (or raspberry_pi, custom, etc.)
+
+# Default profile for laptop/desktop development
+laptop:
+  detector:
+    # model_path: Use default (yolo/best.pt) - override if needed
+    confidence_threshold: 0.25
+    iou_threshold: 0.45
+    max_detections: 30
+    image_size: 640
+    device: "cpu"  # Change to "0" for GPU (CUDA)
+    # classes: null  # null = all classes, or [0, 1, 2] for specific classes
+  camera:
+    source: 0  # Webcam index
+    width: 640
+    height: 480
+    fps: 30
+  frame_skip: 1  # Process every frame
+  show_fps: true
+  log_detections: false
+
+# Optimized profile for Raspberry Pi deployment
+raspberry_pi:
+  detector:
+    confidence_threshold: 0.35  # Higher threshold = fewer false positives
+    iou_threshold: 0.45
+    max_detections: 20
+    image_size: 416  # Smaller for faster inference
+    device: "cpu"
+  camera:
+    source: 0
+    width: 640
+    height: 480
+    fps: 15  # Lower FPS for Pi
+  frame_skip: 2  # Skip every other frame for performance
+  show_fps: true
+  log_detections: false
+
+# High-performance profile (for GPU systems)
+gpu_fast:
+  detector:
+    confidence_threshold: 0.20
+    iou_threshold: 0.45
+    max_detections: 50
+    image_size: 640
+    device: "0"  # First CUDA GPU
+  camera:
+    source: 0
+    width: 1280
+    height: 720
+    fps: 60
+  frame_skip: 1
+  show_fps: true
+  log_detections: false
+
+# Debug profile with verbose logging
+debug:
+  detector:
+    confidence_threshold: 0.10  # Lower threshold to see more detections
+    iou_threshold: 0.45
+    max_detections: 100
+    image_size: 640
+    device: "cpu"
+  camera:
+    source: 0
+    width: 640
+    height: 480
+    fps: 30
+  frame_skip: 1
+  show_fps: true
+  log_detections: true  # Print detections to console
+
