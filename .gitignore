@@ -14,3 +14,6 @@ weights/
 data/images/*
 data/labels/*
 !data/.gitkeep
+
+datasets/*
+dataset/*
