@@ -207,3 +207,6 @@ class Scene:
             "objects": [obj.to_dict() for obj in self.objects],
         }
 
+
+
+
