@@ -69,3 +69,6 @@ class Detector(ABC):
         """String representation of the detector."""
         return f"{self.__class__.__name__}(num_classes={self.num_classes})"
 
+
+
+
