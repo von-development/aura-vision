@@ -7,18 +7,18 @@
 laptop:
   detector:
     # model_path: Use default (yolo/best.pt) - override if needed
-    confidence_threshold: 0.25
+    confidence_threshold: 0.70
     iou_threshold: 0.45
-    max_detections: 30
+    max_detections: 15
     image_size: 640
     device: "cpu"  # Change to "0" for GPU (CUDA)
     # classes: null  # null = all classes, or [0, 1, 2] for specific classes
   camera:
-    source: 0  # Webcam index
+    source: 0 # Webcam index
     width: 640
     height: 480
     fps: 30
-  frame_skip: 1  # Process every frame
+  frame_skip: 2  # Process every frame
   show_fps: true
   log_detections: false
 

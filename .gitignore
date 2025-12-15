@@ -7,10 +7,13 @@ __pycache__/
 runs/
 weights/
 *.onnx
-*.pt
+
 *.npz
 
 # datasets
 data/images/*
 data/labels/*
 !data/.gitkeep
+
+datasets/*
+dataset/*

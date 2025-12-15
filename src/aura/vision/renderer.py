@@ -15,7 +15,7 @@ import cv2
 from aura.core.types import ColorBGR
 
 if TYPE_CHECKING:
-    from aura.core.schemas import Detection, Scene
+    from aura.core.schemas import Detection, MeasuredObject, Scene
     from aura.core.types import FrameArray
 
 
@@ -45,6 +45,8 @@ class RenderStyle:
         font_thickness: Thickness of text strokes.
         show_confidence: Whether to show confidence scores.
         show_class_id: Whether to show class IDs.
+        show_depth: Whether to show depth measurements.
+        show_size: Whether to show size measurements.
         label_background: Whether to draw background behind labels.
     """
 
@@ -53,6 +55,8 @@ class RenderStyle:
     font_thickness: int = 2
     show_confidence: bool = True
     show_class_id: bool = False
+    show_depth: bool = True
+    show_size: bool = True
     label_background: bool = True
 
 
@@ -189,9 +193,132 @@ class FrameRenderer:
             self.draw_detection(frame, detection)
         return frame
 
+    def draw_measured_object(
+        self,
+        frame: FrameArray,
+        obj: MeasuredObject,
+        color: ColorBGR | None = None,
+    ) -> FrameArray:
+        """
+        Draw a measured object with depth and size information.
+
+        Args:
+            frame: Input frame (modified in place).
+            obj: MeasuredObject with detection and measurements.
+            color: Override color, or None to use class-based color.
+
+        Returns:
+            Frame with measured object drawn.
+        """
+        detection = obj.detection
+        box = detection.box
+        color = color or self._get_color(detection.class_id)
+
+        # Draw bounding box
+        cv2.rectangle(
+            frame,
+            (box.x1, box.y1),
+            (box.x2, box.y2),
+            color,
+            self.style.box_thickness,
+        )
+
+        # Build main label text (class + confidence)
+        label_parts = []
+        if self.style.show_class_id:
+            label_parts.append(f"[{detection.class_id}]")
+        label_parts.append(detection.class_name)
+        if self.style.show_confidence:
+            label_parts.append(f"{detection.confidence:.2f}")
+        main_label = " ".join(label_parts)
+
+        # Build measurement label (depth + size)
+        measurement_parts = []
+        if self.style.show_depth and obj.depth_m is not None:
+            measurement_parts.append(f"{obj.depth_m:.2f}m")
+        if self.style.show_size and obj.width_cm is not None and obj.height_cm is not None:
+            measurement_parts.append(f"{obj.width_cm:.0f}x{obj.height_cm:.0f}cm")
+        measurement_label = " | ".join(measurement_parts) if measurement_parts else None
+
+        # Calculate text sizes
+        (main_width, main_height), _ = cv2.getTextSize(
+            main_label,
+            cv2.FONT_HERSHEY_SIMPLEX,
+            self.style.font_scale,
+            self.style.font_thickness,
+        )
+
+        # Position for main label (above box)
+        label_y = max(box.y1 - 8, main_height + 4)
+        label_x = box.x1
+
+        # Draw main label background
+        if self.style.label_background:
+            cv2.rectangle(
+                frame,
+                (label_x, label_y - main_height - 4),
+                (label_x + main_width + 4, label_y + 4),
+                color,
+                cv2.FILLED,
+            )
+            text_color: ColorBGR = (0, 0, 0)
+        else:
+            text_color = color
+
+        # Draw main label
+        cv2.putText(
+            frame,
+            main_label,
+            (label_x + 2, label_y),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            self.style.font_scale,
+            text_color,
+            self.style.font_thickness,
+            cv2.LINE_AA,
+        )
+
+        # Draw measurement label below the box
+        if measurement_label:
+            meas_scale = self.style.font_scale * 0.85
+            (meas_width, meas_height), _ = cv2.getTextSize(
+                measurement_label,
+                cv2.FONT_HERSHEY_SIMPLEX,
+                meas_scale,
+                1,
+            )
+
+            meas_y = box.y2 + meas_height + 4
+            meas_x = box.x1
+
+            # Draw measurement background
+            if self.style.label_background:
+                cv2.rectangle(
+                    frame,
+                    (meas_x, meas_y - meas_height - 2),
+                    (meas_x + meas_width + 4, meas_y + 4),
+                    (50, 50, 50),  # Dark gray background
+                    cv2.FILLED,
+                )
+
+            # Draw measurement text (cyan color for visibility)
+            cv2.putText(
+                frame,
+                measurement_label,
+                (meas_x + 2, meas_y),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                meas_scale,
+                (255, 255, 0),  # Cyan
+                1,
+                cv2.LINE_AA,
+            )
+
+        return frame
+
     def draw_scene(self, frame: FrameArray, scene: Scene) -> FrameArray:
         """
         Draw all objects from a scene on the frame.
+
+        Automatically uses measured object rendering if depth/size data is available.
 
         Args:
             frame: Input frame (modified in place).
@@ -201,7 +328,11 @@ class FrameRenderer:
             Frame with scene objects drawn.
         """
         for obj in scene.objects:
-            self.draw_detection(frame, obj.detection)
+            # Use measured object rendering if we have measurements
+            if obj.depth_m is not None or obj.width_cm is not None:
+                self.draw_measured_object(frame, obj)
+            else:
+                self.draw_detection(frame, obj.detection)
         return frame
 
     def draw_fps(

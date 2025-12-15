@@ -33,3 +33,6 @@ ColorRGB = tuple[int, int, int]
 # BGR color tuple (OpenCV format)
 ColorBGR = tuple[int, int, int]
 
+
+
+

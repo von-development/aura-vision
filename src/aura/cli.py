@@ -19,6 +19,7 @@ from aura.config import load_profile, get_available_profiles
 from aura.config.loader import create_default_profile
 from aura.config.settings import CameraConfig
 from aura.detection.yolo import YoloDetector
+from aura.depth import KnownSizeDepthEstimator, CameraCalibration
 from aura.perception.scene import SceneBuilder, scene_to_json, log_scene
 from aura.vision.camera import CameraSource
 from aura.vision.renderer import FrameRenderer
@@ -49,6 +50,7 @@ def create_parser() -> argparse.ArgumentParser:
 Examples:
   aura webcam                     # Run with default profile
   aura webcam --profile laptop    # Use laptop profile
+  aura webcam --depth             # Enable depth estimation
   aura webcam --camera 1          # Use camera index 1
   aura webcam --model yolo/custom.pt  # Use custom model
   aura webcam --verbose           # Enable debug logging
@@ -89,6 +91,11 @@ Available profiles: laptop, raspberry_pi, gpu_fast, debug
         help="Confidence threshold (overrides profile)",
     )
     webcam_parser.add_argument(
+        "--depth", "-d",
+        action="store_true",
+        help="Enable depth estimation (using known object sizes)",
+    )
+    webcam_parser.add_argument(
         "--verbose", "-v",
         action="store_true",
         help="Enable verbose debug logging",
@@ -103,6 +110,12 @@ Available profiles: laptop, raspberry_pi, gpu_fast, debug
     subparsers.add_parser(
         "profiles",
         help="List available runtime profiles",
+    )
+
+    # List known objects subcommand
+    subparsers.add_parser(
+        "objects",
+        help="List objects with known sizes for depth estimation",
     )
 
     return parser
@@ -175,7 +188,19 @@ def run_webcam(args: argparse.Namespace) -> int:
 
     camera = CameraSource(profile.camera)
     renderer = FrameRenderer()
-    scene_builder = SceneBuilder()
+
+    # Initialize depth estimator if requested
+    depth_estimator = None
+    if args.depth:
+        logger.info("Depth estimation enabled (using known object sizes)")
+        calibration = CameraCalibration.get_default_calibration(
+            image_width=profile.camera.width or 640,
+            image_height=profile.camera.height or 480,
+        )
+        depth_estimator = KnownSizeDepthEstimator(calibration=calibration)
+        logger.info(f"Known objects: {len(depth_estimator.known_classes)} classes")
+
+    scene_builder = SceneBuilder(depth_estimator=depth_estimator)
 
     # FPS tracking
     fps_start_time = time.time()
@@ -184,9 +209,11 @@ def run_webcam(args: argparse.Namespace) -> int:
 
     # Detection caching for frame skip
     cached_detections: list = []
+    cached_scene = None
     frame_idx = 0
 
-    logger.info("Starting webcam detection. Press 'q' to quit.")
+    mode_str = "detection + depth" if args.depth else "detection"
+    logger.info(f"Starting webcam {mode_str}. Press 'q' to quit.")
 
     try:
         with camera:
@@ -198,11 +225,12 @@ def run_webcam(args: argparse.Namespace) -> int:
                 if frame_idx % profile.frame_skip == 0:
                     detections = detector.detect(frame)
                     cached_detections = detections
+                    # Build scene with depth estimation
+                    scene = scene_builder.build(detections, frame)
+                    cached_scene = scene
                 else:
                     detections = cached_detections
-
-                # Build scene
-                scene = scene_builder.build(detections)
+                    scene = cached_scene
 
                 # Log detections if enabled
                 if profile.log_detections and detections:
@@ -212,8 +240,11 @@ def run_webcam(args: argparse.Namespace) -> int:
 
                 # Display unless headless mode
                 if not args.no_display:
-                    # Draw detections
-                    renderer.draw_detections(frame, detections)
+                    # Draw scene (with depth/size if available)
+                    if scene is not None:
+                        renderer.draw_scene(frame, scene)
+                    else:
+                        renderer.draw_detections(frame, detections)
 
                     # Calculate and draw FPS
                     elapsed = time.time() - fps_start_time
@@ -232,6 +263,8 @@ def run_webcam(args: argparse.Namespace) -> int:
 
                     # Show frame
                     window_name = f"Aura-Vision [{profile.name}]"
+                    if args.depth:
+                        window_name += " +Depth"
                     cv2.imshow(window_name, frame)
 
                     # Check for quit key
@@ -266,6 +299,35 @@ def run_list_profiles(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_list_objects(args: argparse.Namespace) -> int:
+    """
+    List objects with known sizes for depth estimation.
+
+    Args:
+        args: Parsed command-line arguments.
+
+    Returns:
+        Exit code (0 for success).
+    """
+    from aura.depth.known_size import load_object_sizes
+
+    sizes = load_object_sizes()
+
+    print("Objects with known sizes for depth estimation:")
+    print("-" * 50)
+    print(f"{'Class Name':<35} {'Width':>6} {'Height':>6}")
+    print("-" * 50)
+
+    for class_name, (width, height) in sorted(sizes.items()):
+        width_cm = width * 100
+        height_cm = height * 100
+        print(f"{class_name:<35} {width_cm:>5.1f}cm {height_cm:>5.1f}cm")
+
+    print("-" * 50)
+    print(f"Total: {len(sizes)} objects")
+    return 0
+
+
 def main() -> int:
     """
     Main entry point for the CLI.
@@ -285,6 +347,8 @@ def main() -> int:
         return run_webcam(args)
     elif args.command == "profiles":
         return run_list_profiles(args)
+    elif args.command == "objects":
+        return run_list_objects(args)
     else:
         parser.print_help()
         return 0
@@ -292,4 +356,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

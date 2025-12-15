@@ -147,3 +147,6 @@ class YoloDetector(Detector):
             f"device={self.config.device})"
         )
 
+
+
+
