@@ -1,0 +1,160 @@
+# Known Object Sizes Database
+# ============================
+# Real-world dimensions for common objects (width, height in meters)
+# Used for depth estimation from known object sizes
+#
+# Format: class_name: [width_m, height_m]
+# Note: These are typical/average sizes - actual objects may vary
+
+# COCO Dataset Classes (80 classes)
+# ---------------------------------
+coco:
+  person: [0.45, 1.70]           # Average adult human
+  bicycle: [1.80, 1.10]          # Standard bicycle
+  car: [4.50, 1.50]              # Average sedan
+  motorcycle: [2.20, 1.10]       # Standard motorcycle
+  airplane: [35.0, 12.0]         # Commercial airplane (varies greatly)
+  bus: [12.0, 3.20]              # City bus
+  train: [3.00, 4.00]            # Train car width/height
+  truck: [6.00, 3.50]            # Medium truck
+  boat: [5.00, 2.00]             # Small boat
+  traffic light: [0.30, 1.00]    # Standard traffic light
+  fire hydrant: [0.25, 0.75]     # Fire hydrant
+  stop sign: [0.75, 0.75]        # Standard stop sign
+  parking meter: [0.20, 1.20]    # Parking meter
+  bench: [1.50, 0.90]            # Park bench
+  bird: [0.15, 0.20]             # Small bird (varies)
+  cat: [0.45, 0.25]              # House cat
+  dog: [0.60, 0.50]              # Medium dog
+  horse: [2.40, 1.60]            # Adult horse
+  sheep: [1.20, 0.80]            # Adult sheep
+  cow: [2.50, 1.50]              # Adult cow
+  elephant: [3.50, 3.00]         # Adult elephant
+  bear: [2.00, 1.50]             # Adult bear
+  zebra: [2.50, 1.50]            # Adult zebra
+  giraffe: [1.50, 5.00]          # Adult giraffe
+  backpack: [0.30, 0.45]         # Standard backpack
+  umbrella: [1.00, 0.80]         # Open umbrella
+  handbag: [0.35, 0.30]          # Handbag/purse
+  tie: [0.08, 0.55]              # Necktie
+  suitcase: [0.45, 0.70]         # Rolling suitcase
+  frisbee: [0.27, 0.27]          # Standard frisbee
+  skis: [1.70, 0.10]             # Adult skis
+  snowboard: [1.55, 0.30]        # Snowboard
+  sports ball: [0.22, 0.22]      # Soccer ball
+  kite: [1.00, 0.80]             # Kite
+  baseball bat: [1.07, 0.07]     # Baseball bat
+  baseball glove: [0.30, 0.30]   # Baseball glove
+  skateboard: [0.80, 0.20]       # Skateboard
+  surfboard: [2.00, 0.55]        # Surfboard
+  tennis racket: [0.27, 0.69]    # Tennis racket
+  bottle: [0.07, 0.25]           # Water bottle
+  wine glass: [0.08, 0.22]       # Wine glass
+  cup: [0.08, 0.10]              # Coffee cup/mug
+  fork: [0.02, 0.19]             # Dinner fork
+  knife: [0.02, 0.22]            # Dinner knife
+  spoon: [0.04, 0.18]            # Tablespoon
+  bowl: [0.15, 0.08]             # Cereal bowl
+  banana: [0.04, 0.20]           # Banana
+  apple: [0.08, 0.08]            # Apple
+  sandwich: [0.12, 0.08]         # Sandwich
+  orange: [0.08, 0.08]           # Orange
+  broccoli: [0.12, 0.15]         # Broccoli head
+  carrot: [0.03, 0.18]           # Carrot
+  hot dog: [0.04, 0.15]          # Hot dog
+  pizza: [0.35, 0.35]            # Medium pizza
+  donut: [0.10, 0.10]            # Donut
+  cake: [0.25, 0.15]             # Cake slice
+  chair: [0.50, 0.90]            # Office chair
+  couch: [2.00, 0.90]            # Sofa/couch
+  potted plant: [0.30, 0.50]     # Potted plant
+  bed: [2.00, 0.60]              # Bed (side view)
+  dining table: [1.50, 0.75]     # Dining table
+  toilet: [0.40, 0.70]           # Toilet
+  tv: [1.20, 0.70]               # 55" TV
+  laptop: [0.35, 0.25]           # 15" laptop
+  mouse: [0.06, 0.10]            # Computer mouse
+  remote: [0.05, 0.20]           # TV remote
+  keyboard: [0.45, 0.15]         # Computer keyboard
+  cell phone: [0.07, 0.15]       # Smartphone
+  microwave: [0.50, 0.30]        # Microwave oven
+  oven: [0.60, 0.90]             # Kitchen oven
+  toaster: [0.25, 0.20]          # Toaster
+  sink: [0.60, 0.25]             # Kitchen sink
+  refrigerator: [0.80, 1.80]     # Refrigerator
+  book: [0.15, 0.23]             # Paperback book
+  clock: [0.30, 0.30]            # Wall clock
+  vase: [0.15, 0.30]             # Flower vase
+  scissors: [0.08, 0.20]         # Scissors
+  teddy bear: [0.25, 0.35]       # Teddy bear
+  hair drier: [0.10, 0.25]       # Hair dryer
+  toothbrush: [0.02, 0.19]       # Toothbrush
+
+# ElectroCom-61 Dataset Classes
+# -----------------------------
+electrocom:
+  1-5-Volt-Battery: [0.012, 0.030]      # AA battery
+  3-3-Volt-Battery: [0.020, 0.003]      # Coin cell CR2032
+  7-Segment-Display: [0.038, 0.050]     # Standard 7-segment
+  9-Volt-Battery: [0.026, 0.048]        # 9V battery
+  Arduino-Mega: [0.101, 0.053]          # Arduino Mega 2560
+  Arduino-Nano: [0.045, 0.018]          # Arduino Nano
+  Arduino-Uno: [0.069, 0.053]           # Arduino Uno R3
+  BJT-Transistor: [0.005, 0.010]        # TO-92 package
+  Bluetooth-Module: [0.037, 0.016]      # HC-05/06 module
+  Breadboard: [0.165, 0.055]            # Full-size breadboard
+  Bridge-Rectifier: [0.020, 0.015]      # Small bridge rectifier
+  Buck-Converter: [0.043, 0.021]        # Small buck converter module
+  Buzzer: [0.012, 0.009]                # Piezo buzzer
+  Capacitor-10mf: [0.005, 0.011]        # Electrolytic 10µF
+  Capacitor-470mf: [0.010, 0.020]       # Electrolytic 470µF
+  DC-Motor: [0.025, 0.037]              # Small DC motor
+  Diode: [0.004, 0.008]                 # 1N4007 style
+  ESP32: [0.051, 0.028]                 # ESP32 DevKit
+  ESP32-CAM: [0.040, 0.027]             # ESP32-CAM module
+  FT-232-USB-Serial-Module: [0.036, 0.018]  # FT232 USB to serial
+  Film-Capacitor: [0.018, 0.010]        # Film capacitor
+  Fuse: [0.006, 0.020]                  # Glass fuse
+  Fuse-Base: [0.022, 0.012]             # Fuse holder
+  GSM-Module: [0.024, 0.024]            # SIM800L style
+  Gas-Sensor: [0.016, 0.018]            # MQ-series sensor
+  Heat-Sink: [0.020, 0.015]             # Small heat sink
+  High-Voltage-Ceramic-Capacitor: [0.010, 0.015]
+  Humidity-Sensor: [0.015, 0.025]       # DHT11/DHT22
+  IC-Base-14-Pin: [0.020, 0.008]        # 14-pin DIP socket
+  IC-Base-28-Pin: [0.038, 0.008]        # 28-pin DIP socket
+  IC-Chip: [0.020, 0.007]               # Generic DIP IC
+  IGBT: [0.015, 0.020]                  # IGBT transistor
+  IR-Sensor: [0.010, 0.015]             # IR receiver/transmitter
+  Inductor: [0.008, 0.008]              # Small inductor
+  Keypad: [0.046, 0.054]                # 4x4 membrane keypad
+  LCD-Display: [0.080, 0.036]           # 16x2 LCD
+  LDR-Sensor: [0.005, 0.005]            # Light dependent resistor
+  LED-Light: [0.005, 0.008]             # 5mm LED
+  Low-Voltage-Ceramic-Capacitor: [0.005, 0.008]
+  MLC-Capacitor: [0.003, 0.003]         # Multilayer ceramic
+  MOSFET: [0.010, 0.015]                # TO-220 MOSFET
+  Motion-Sensor: [0.024, 0.024]         # PIR sensor module
+  Motor-Driver: [0.043, 0.043]          # L298N driver board
+  NTC-Thermistor: [0.005, 0.010]        # NTC thermistor
+  OLED-Display: [0.027, 0.027]          # 0.96" OLED
+  Pin-Header: [0.050, 0.008]            # 20-pin header
+  Push-Switch: [0.012, 0.012]           # Tactile push button
+  RFID-Scanner: [0.040, 0.060]          # RC522 RFID module
+  Raindrops-Module: [0.032, 0.052]      # Rain sensor module
+  Relay-Module: [0.050, 0.040]          # Single relay module
+  Resistor: [0.006, 0.002]              # 1/4W through-hole
+  Rocker-Switch: [0.020, 0.015]         # Rocker switch
+  Servo-Motor: [0.040, 0.020]           # SG90 servo
+  Soil-Moisture-Sensor: [0.020, 0.060]  # Soil moisture probe
+  Sonar-Sensor: [0.045, 0.020]          # HC-SR04 ultrasonic
+  TCRT5000: [0.010, 0.006]              # TCRT5000 sensor
+  Tact-Switch: [0.006, 0.006]           # Small tact switch
+  Taper-Potentiometer: [0.024, 0.018]   # Panel mount pot
+  Trimmer-Potentiometer: [0.010, 0.010] # Trim pot
+  Water-Sensor: [0.020, 0.062]          # Water level sensor
+  Zener-Diode: [0.004, 0.008]           # Zener diode
+
+
+
+
